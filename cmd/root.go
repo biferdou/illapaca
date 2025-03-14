@@ -6,9 +6,9 @@ import (
 )
 
 var rootCmd = &cobra.Command{
-	Use:   "illapa",
-	Short: "Illapa - Terminal Weather Dashboard",
-	Long: `Illapa is a terminal-based weather dashboard that provides
+	Use:   "illapaca",
+	Short: "Illapaca - Terminal Weather Dashboard",
+	Long: `Illapaca is a terminal-based weather dashboard that provides
 current conditions, forecasts, and visualizations right in your terminal.
 
 Named after the Inca god of weather, this tool offers quick access to
