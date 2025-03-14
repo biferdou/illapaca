@@ -4,15 +4,8 @@ import (
 	"fmt"
 	"strconv"
 
-	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
-
-// Bind command flags to viper
-func BindFlags(cmd *cobra.Command) {
-	viper.BindPFlag("api_key", cmd.PersistentFlags().Lookup("api-key"))
-	viper.BindPFlag("units", cmd.PersistentFlags().Lookup("units"))
-}
 
 // Save the current config to disk
 func SaveConfig() error {

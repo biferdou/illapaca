@@ -1,3 +1,4 @@
+// config/config.go
 package config
 
 import (
@@ -9,8 +10,8 @@ import (
 	"github.com/spf13/viper"
 )
 
-// Version
-const Version = "0.1.0"
+// Version information
+const Version = "1.0.0"
 
 // Config variables
 var (
@@ -18,7 +19,7 @@ var (
 	AppConfig Config
 )
 
-// Config struct
+// Config struct for app configuration
 type Config struct {
 	APIKey            string
 	DefaultLocation   string
@@ -27,7 +28,7 @@ type Config struct {
 	AlertThresholds   AlertThresholds
 }
 
-// AlertThresholds struct
+// AlertThresholds for weather alerts
 type AlertThresholds struct {
 	HighTemp      float64
 	LowTemp       float64
@@ -35,7 +36,7 @@ type AlertThresholds struct {
 	WindSpeed     float64
 }
 
-// Initialize the config
+// InitConfig initializes the configuration
 func InitConfig() {
 	if CfgFile != "" {
 		viper.SetConfigFile(CfgFile)
@@ -55,7 +56,7 @@ func InitConfig() {
 	godotenv.Load()
 
 	// Set default values
-	viper.SetDefault("units", "metric")
+	viper.SetDefault("units", "metric") // OpenWeatherMap supports metric, imperial, standard
 	viper.SetDefault("favorite_locations", []string{})
 	viper.SetDefault("alert_thresholds", map[string]float64{
 		"high_temp":     35.0,
@@ -64,7 +65,7 @@ func InitConfig() {
 		"wind_speed":    30.0,
 	})
 
-	// Read the config file
+	// Read config file
 	if err := viper.ReadInConfig(); err == nil {
 		fmt.Println("Using config file:", viper.ConfigFileUsed())
 	}
@@ -83,9 +84,16 @@ func InitConfig() {
 		},
 	}
 
-	// Override with environment variables
-	if os.Getenv(
-		"ILLAPA_API_KEY") != "" {
+	// Override with environment variables if they exist
+	if os.Getenv("ILLAPA_API_KEY") != "" {
 		AppConfig.APIKey = os.Getenv("ILLAPA_API_KEY")
 	}
 }
+
+// BindFlags binds command flags to viper
+func BindFlags(cmd *cobra.Command) {
+	viper.BindPFlag("api_key", cmd.PersistentFlags().Lookup("api-key"))
+	viper.BindPFlag("units", cmd.PersistentFlags().Lookup("units"))
+}
+
+// Rest of functions remain the same as they don't depend on the API structure
