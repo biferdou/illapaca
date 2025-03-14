@@ -46,3 +46,6 @@ Thumbs.db
 **/__pycache__/
 **/.vscode/
 **/.git/**/
+
+# Build files
+illapaca
