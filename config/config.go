@@ -90,6 +90,15 @@ func InitConfig() {
 	}
 }
 
+// ShowAlertThresholds displays current alert thresholds
+func ShowAlertThresholds() {
+	fmt.Println("Current Alert Thresholds:")
+	fmt.Printf("High Temperature: %.1f°C\n", AppConfig.AlertThresholds.HighTemp)
+	fmt.Printf("Low Temperature: %.1f°C\n", AppConfig.AlertThresholds.LowTemp)
+	fmt.Printf("Precipitation Chance: %.0f%%\n", AppConfig.AlertThresholds.Precipitation)
+	fmt.Printf("Wind Speed: %.1f km/h\n", AppConfig.AlertThresholds.WindSpeed)
+}
+
 // BindFlags binds command flags to viper
 func BindFlags(cmd *cobra.Command) {
 	viper.BindPFlag("api_key", cmd.PersistentFlags().Lookup("api-key"))
