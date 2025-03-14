@@ -46,10 +46,10 @@ func InitConfig() {
 
 		viper.AddConfigPath(home)
 		viper.SetConfigType("yaml")
-		viper.SetConfigName(".illapa")
+		viper.SetConfigName(".illapaca")
 	}
 
-	viper.SetEnvPrefix("ILLAPA")
+	viper.SetEnvPrefix("ILLAPACA")
 	viper.AutomaticEnv()
 
 	// Load .env file if it exists
@@ -67,6 +67,32 @@ func InitConfig() {
 
 	// Read config file
 	if err := viper.ReadInConfig(); err == nil {
+		fmt.Println("Using config file:", viper.ConfigFileUsed())
+	}
+
+	if err := viper.ReadInConfig(); err != nil {
+		// Config file not found; create a default one
+		if _, ok := err.(viper.ConfigFileNotFoundError); ok {
+			fmt.Println("Creating default config file...")
+			// Set default values
+			viper.Set("api_key", "")
+			viper.Set("default_location", "")
+			viper.Set("units", "metric")
+			viper.Set("favorite_locations", []string{})
+			viper.Set("alert_thresholds.high_temp", 30.0)
+			viper.Set("alert_thresholds.low_temp", 0.0)
+			viper.Set("alert_thresholds.precipitation", 70.0)
+			viper.Set("alert_thresholds.wind_speed", 30.0)
+
+			// Save the config file
+			err = viper.SafeWriteConfig()
+			if err != nil {
+				fmt.Println("Error creating config file:", err)
+			}
+		} else {
+			fmt.Println("Error reading config file:", err)
+		}
+	} else {
 		fmt.Println("Using config file:", viper.ConfigFileUsed())
 	}
 
