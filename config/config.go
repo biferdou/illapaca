@@ -65,11 +65,6 @@ func InitConfig() {
 		"wind_speed":    30.0,
 	})
 
-	// Read config file
-	if err := viper.ReadInConfig(); err == nil {
-		fmt.Println("Using config file:", viper.ConfigFileUsed())
-	}
-
 	if err := viper.ReadInConfig(); err != nil {
 		// Config file not found; create a default one
 		if _, ok := err.(viper.ConfigFileNotFoundError); ok {
@@ -92,8 +87,6 @@ func InitConfig() {
 		} else {
 			fmt.Println("Error reading config file:", err)
 		}
-	} else {
-		fmt.Println("Using config file:", viper.ConfigFileUsed())
 	}
 
 	// Parse config
@@ -130,5 +123,3 @@ func BindFlags(cmd *cobra.Command) {
 	viper.BindPFlag("api_key", cmd.PersistentFlags().Lookup("api-key"))
 	viper.BindPFlag("units", cmd.PersistentFlags().Lookup("units"))
 }
-
-// Rest of functions remain the same as they don't depend on the API structure
