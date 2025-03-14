@@ -128,8 +128,8 @@ func FetchWeather(location string, days int) (*model.WeatherData, error) {
 				Text: currentData.Weather[0].Description,
 				Icon: currentData.Weather[0].Icon,
 			},
-			VisKm: currentData.Visibility / 1000.0, // Convert m to km
-			UV:    0,                               // OpenWeatherMap doesn't provide UV in the basic API
+			VisKm: float64(currentData.Visibility) / 1000.0, // Convert m to km
+			UV:    0,                                        // OpenWeatherMap doesn't provide UV in the basic API
 		},
 		Location: model.Location{
 			Name:      coordinates.Name,
