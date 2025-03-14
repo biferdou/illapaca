@@ -46,7 +46,7 @@ func DisplayCurrentWeather(data *model.WeatherData) {
 
 	// Location and current time
 	locationTitle := color.New(color.FgHiCyan, color.Bold)
-	locationTitle.Printf("📍 %s, %s, %s\n", data.Location.Name, data.Location.Region, data.Location.Country)
+	locationTitle.Printf("📍 %s, %s\n", data.Location.Name, data.Location.Country)
 	fmt.Printf("🕒 Local time: %s\n\n", data.Location.Localtime)
 
 	// Current conditions
@@ -206,60 +206,118 @@ func CheckAlerts(data *model.WeatherData) {
 	fmt.Println()
 }
 
-// DisplayHistoricalComparison shows comparison with historical data
-func DisplayHistoricalComparison(current *model.WeatherData, historical *model.HistoricalData) {
+// DisplayLocationComparison shows a side-by-side comparison of two locations
+func DisplayLocationComparison(data1, data2 *model.WeatherData) {
 	comparisonTitle := color.New(color.FgHiBlue, color.Bold)
-	comparisonTitle.Printf("Historical Comparison (%s vs Today):\n",
-		historical.Forecast.ForecastDay[0].Date)
-
-	// Get current day's data
-	currentDay := current.Forecast.ForecastDay[0].Day
-
-	// Get historical day's data
-	historicalDay := historical.Forecast.ForecastDay[0].Day
+	comparisonTitle.Printf("Location Comparison: %s vs %s\n\n",
+		data1.Location.Name, data2.Location.Name)
 
 	// Display comparison
 	table := tablewriter.NewWriter(os.Stdout)
-	table.SetHeader([]string{"Metric", "Today", "Historical", "Difference"})
+	table.SetHeader([]string{"Metric", data1.Location.Name, data2.Location.Name, "Difference"})
 
-	// Max temperature
-	maxTempDiff := currentDay.MaxTempC - historicalDay.MaxTempC
-	maxTempDiffStr := fmt.Sprintf("%.1f°C", maxTempDiff)
-	if maxTempDiff > 0 {
-		maxTempDiffStr = "+" + maxTempDiffStr
+	// Temperature
+	tempDiff := data1.Current.TempC - data2.Current.TempC
+	tempDiffStr := fmt.Sprintf("%.1f°C", tempDiff)
+	if tempDiff > 0 {
+		tempDiffStr = "+" + tempDiffStr
 	}
 
-	// Min temperature
-	minTempDiff := currentDay.MinTempC - historicalDay.MinTempC
-	minTempDiffStr := fmt.Sprintf("%.1f°C", minTempDiff)
-	if minTempDiff > 0 {
-		minTempDiffStr = "+" + minTempDiffStr
+	// Feels like
+	feelsLikeDiff := data1.Current.FeelsLikeC - data2.Current.FeelsLikeC
+	feelsLikeDiffStr := fmt.Sprintf("%.1f°C", feelsLikeDiff)
+	if feelsLikeDiff > 0 {
+		feelsLikeDiffStr = "+" + feelsLikeDiffStr
 	}
 
-	// Precipitation
-	precipDiff := currentDay.TotalPrecipMm - historicalDay.TotalPrecipMm
-	precipDiffStr := fmt.Sprintf("%.1f mm", precipDiff)
-	if precipDiff > 0 {
-		precipDiffStr = "+" + precipDiffStr
+	// Humidity
+	humidityDiff := data1.Current.Humidity - data2.Current.Humidity
+	humidityDiffStr := fmt.Sprintf("%d%%", humidityDiff)
+	if humidityDiff > 0 {
+		humidityDiffStr = "+" + humidityDiffStr
 	}
 
-	table.Append([]string{"Max Temp",
-		fmt.Sprintf("%.1f°C", currentDay.MaxTempC),
-		fmt.Sprintf("%.1f°C", historicalDay.MaxTempC),
-		maxTempDiffStr})
+	// Wind speed
+	windDiff := data1.Current.WindKph - data2.Current.WindKph
+	windDiffStr := fmt.Sprintf("%.1f km/h", windDiff)
+	if windDiff > 0 {
+		windDiffStr = "+" + windDiffStr
+	}
 
-	table.Append([]string{"Min Temp",
-		fmt.Sprintf("%.1f°C", currentDay.MinTempC),
-		fmt.Sprintf("%.1f°C", historicalDay.MinTempC),
-		minTempDiffStr})
+	// Build table rows
+	table.Append([]string{"Temperature",
+		fmt.Sprintf("%.1f°C", data1.Current.TempC),
+		fmt.Sprintf("%.1f°C", data2.Current.TempC),
+		tempDiffStr})
+
+	table.Append([]string{"Feels Like",
+		fmt.Sprintf("%.1f°C", data1.Current.FeelsLikeC),
+		fmt.Sprintf("%.1f°C", data2.Current.FeelsLikeC),
+		feelsLikeDiffStr})
+
+	table.Append([]string{"Condition",
+		data1.Current.Condition.Text,
+		data2.Current.Condition.Text,
+		"--"})
+
+	table.Append([]string{"Humidity",
+		fmt.Sprintf("%d%%", data1.Current.Humidity),
+		fmt.Sprintf("%d%%", data2.Current.Humidity),
+		humidityDiffStr})
+
+	table.Append([]string{"Wind Speed",
+		fmt.Sprintf("%.1f km/h", data1.Current.WindKph),
+		fmt.Sprintf("%.1f km/h", data2.Current.WindKph),
+		windDiffStr})
+
+	table.Append([]string{"Wind Direction",
+		data1.Current.WindDir,
+		data2.Current.WindDir,
+		"--"})
 
 	table.Append([]string{"Precipitation",
-		fmt.Sprintf("%.1f mm", currentDay.TotalPrecipMm),
-		fmt.Sprintf("%.1f mm", historicalDay.TotalPrecipMm),
-		precipDiffStr})
+		fmt.Sprintf("%.1f mm", data1.Current.PrecipMm),
+		fmt.Sprintf("%.1f mm", data2.Current.PrecipMm),
+		"--"})
+
+	table.Append([]string{"Visibility",
+		fmt.Sprintf("%.1f km", data1.Current.VisKm),
+		fmt.Sprintf("%.1f km", data2.Current.VisKm),
+		"--"})
+
+	// Time difference
+	table.Append([]string{"Local Time",
+		data1.Location.Localtime,
+		data2.Location.Localtime,
+		"--"})
 
 	table.Render()
 	fmt.Println()
+
+	// Add some analysis
+	if tempDiff > 3 {
+		fmt.Printf("📊 %s is %.1f°C warmer than %s\n",
+			data1.Location.Name, tempDiff, data2.Location.Name)
+	} else if tempDiff < -3 {
+		fmt.Printf("📊 %s is %.1f°C colder than %s\n",
+			data1.Location.Name, -tempDiff, data2.Location.Name)
+	}
+
+	if humidityDiff > 15 {
+		fmt.Printf("💧 %s is more humid than %s\n",
+			data1.Location.Name, data2.Location.Name)
+	} else if humidityDiff < -15 {
+		fmt.Printf("💧 %s is drier than %s\n",
+			data1.Location.Name, data2.Location.Name)
+	}
+
+	if windDiff > 10 {
+		fmt.Printf("🌬️ %s is windier than %s\n",
+			data1.Location.Name, data2.Location.Name)
+	} else if windDiff < -10 {
+		fmt.Printf("🌬️ %s is calmer than %s\n",
+			data1.Location.Name, data2.Location.Name)
+	}
 }
 
 // DisplayDashboard displays the full dashboard
