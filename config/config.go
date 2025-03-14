@@ -85,8 +85,8 @@ func InitConfig() {
 	}
 
 	// Override with environment variables if they exist
-	if os.Getenv("ILLAPA_API_KEY") != "" {
-		AppConfig.APIKey = os.Getenv("ILLAPA_API_KEY")
+	if os.Getenv("OPENWEATHER_API_KEY") != "" {
+		AppConfig.APIKey = os.Getenv("OPENWEATHER_API_KEY")
 	}
 }
 
