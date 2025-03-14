@@ -1,0 +1,48 @@
+# Binaries and executables
+*.exe
+*.out
+*.app
+*.bin
+
+# Build artifacts
+/build/
+/dist/
+/bin/
+/obj/
+
+# Go-specific files
+*.log
+*.test
+
+# Dependency management
+vendor/
+
+# IDE and editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*.swn
+*.bak
+*.tmp
+
+# OS-specific files
+.DS_Store
+Thumbs.db
+
+# Environment files
+.env
+.env.*
+
+# Go modules
+/go.sum
+/go.mod
+
+# Cache and temporary files
+/tmp/
+/cache/
+**/.DS_Store
+**/.idea/
+**/__pycache__/
+**/.vscode/
+**/.git/**/
