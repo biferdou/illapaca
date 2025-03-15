@@ -27,9 +27,18 @@ func DisplayDashboard(data *model.WeatherData) {
 // displayDashboardHeader displays the dashboard title banner
 func displayDashboardHeader() {
 	title := color.New(color.FgHiCyan, color.Bold)
-	title.Println("╔══════════════════════════════════════════╗")
-	title.Println("║           ILLAPA WEATHER DASHBOARD       ║")
-	title.Println("╚══════════════════════════════════════════╝")
+	title.Println("ILLAPA WEATHER DASHBOARD")
+	fmt.Println(dash(38))
+	fmt.Println()
+}
+
+// Helper function to create a horizontal line
+func dash(length int) string {
+	dashes := ""
+	for range length {
+		dashes += "─"
+	}
+	return dashes
 }
 
 // DisplayExtendedDashboard shows a more detailed dashboard with hourly forecasts
@@ -54,7 +63,8 @@ func DisplayExtendedDashboard(data *model.WeatherData, showHourly bool) {
 // DisplayCompactDashboard shows a minimal dashboard for small terminals
 func DisplayCompactDashboard(data *model.WeatherData) {
 	compactTitle := color.New(color.FgHiCyan, color.Bold)
-	compactTitle.Println("=== ILLAPA WEATHER ===")
+	compactTitle.Println("ILLAPA WEATHER")
+	fmt.Println(dash(20))
 
 	// Simplified current weather display
 	locationTitle := color.New(color.FgHiCyan)
@@ -72,7 +82,7 @@ func DisplayCompactDashboard(data *model.WeatherData) {
 		data.Current.WindKph, data.Current.WindDir, data.Current.Humidity)
 
 	// Compact forecast
-	forecastTitle := color.New(color.FgHiMagenta)
+	forecastTitle := color.New(color.FgHiMagenta, color.Bold)
 	forecastTitle.Println("3-Day Forecast:")
 
 	days := min(len(data.Forecast.ForecastDay), 3)
