@@ -73,34 +73,52 @@ func DisplayTemperatureChart(data *model.WeatherData) {
 		normalizedTemps[i] = int((t - min) * 10 / (max - min))
 	}
 
+	// Calculate total chart width
+	chartWidth := 88
+
 	// Print the chart
-	fmt.Println("     ┌────────────────────────────────────────────────────────────────────────────────────────┐")
+	fmt.Println("     ┌" + repeatChar("─", chartWidth) + "┐")
+
+	// Print the header row with time labels
 	fmt.Print("     │")
 
-	// Top row labels
-	for i, time := range times {
-		if i == 0 {
-			fmt.Printf("  %s", time)
-		} else {
-			fmt.Printf("      %s", time)
-		}
+	// Calculate space for each time column to ensure alignment
+	timeColWidth := chartWidth / len(times)
+
+	// Print time labels with adjusted spacing
+	for _, time := range times {
+		padding := timeColWidth - len(time)
+		leftPad := padding / 2
+		rightPad := padding - leftPad
+
+		fmt.Print(repeatChar(" ", leftPad))
+		fmt.Print(time)
+		fmt.Print(repeatChar(" ", rightPad))
 	}
-	fmt.Println("  │")
+	fmt.Println("│")
 
 	// Print chart lines
 	for row := 10; row >= 0; row-- {
 		fmt.Print("     │")
 
-		// Print data points
+		// Print data points with calculated spacing
 		for i, level := range normalizedTemps {
+			padding := timeColWidth - 1 // -1 for the dot or line character
+			leftPad := padding / 2
+			rightPad := padding - leftPad
+
 			if level == row {
 				tempColor := getTemperatureColor(temps[i], min, max)
-				tempColor.Print("    •      ")
+				fmt.Print(repeatChar(" ", leftPad))
+				tempColor.Print("•")
+				fmt.Print(repeatChar(" ", rightPad))
 			} else if level > row {
 				tempColor := getTemperatureColor(temps[i], min, max)
-				tempColor.Print("    │      ")
+				fmt.Print(repeatChar(" ", leftPad))
+				tempColor.Print("│")
+				fmt.Print(repeatChar(" ", rightPad))
 			} else {
-				fmt.Print("           ")
+				fmt.Print(repeatChar(" ", timeColWidth))
 			}
 		}
 
@@ -119,7 +137,7 @@ func DisplayTemperatureChart(data *model.WeatherData) {
 		fmt.Println()
 	}
 
-	fmt.Println("     └────────────────────────────────────────────────────────────────────────────────────────┘")
+	fmt.Println("     └" + repeatChar("─", chartWidth) + "┘")
 	fmt.Println()
 }
 
@@ -143,27 +161,41 @@ func DisplayPrecipitationChart(day model.ForecastDay) {
 		times = append(times, fmt.Sprintf("%02d:00", t.Hour()))
 	}
 
+	// Calculate total chart width
+	chartWidth := 88
+
 	// Print the chart header
-	fmt.Println("     ┌────────────────────────────────────────────────────────────────────────────────────────┐")
+	fmt.Println("     ┌" + repeatChar("─", chartWidth) + "┐")
+
+	// Print the header row with time labels
 	fmt.Print("     │")
 
-	// Top row labels
-	for i, time := range times {
-		if i == 0 {
-			fmt.Printf("  %s", time)
-		} else {
-			fmt.Printf("      %s", time)
-		}
+	// Calculate space for each time column to ensure alignment
+	timeColWidth := chartWidth / len(times)
+
+	// Print time labels with adjusted spacing
+	for _, time := range times {
+		padding := timeColWidth - len(time)
+		leftPad := padding / 2
+		rightPad := padding - leftPad
+
+		fmt.Print(repeatChar(" ", leftPad))
+		fmt.Print(time)
+		fmt.Print(repeatChar(" ", rightPad))
 	}
-	fmt.Println("  │")
+	fmt.Println("│")
 
 	// Print chart
 	rainLevels := []int{100, 80, 60, 40, 20, 0}
 	for i, level := range rainLevels {
 		fmt.Print("     │")
 
-		// Print precipitation bars
+		// Print precipitation bars with calculated spacing
 		for _, chance := range chances {
+			padding := timeColWidth - 1 // -1 for the rain symbol
+			leftPad := padding / 2
+			rightPad := padding - leftPad
+
 			if chance >= level {
 				// Choose symbol and color based on chance
 				var symbol string
@@ -187,11 +219,11 @@ func DisplayPrecipitationChart(day model.ForecastDay) {
 				}
 
 				// Print bar element with spacing
-				fmt.Print("    ")
+				fmt.Print(repeatChar(" ", leftPad))
 				rainColor.Print(symbol)
-				fmt.Print("      ")
+				fmt.Print(repeatChar(" ", rightPad))
 			} else {
-				fmt.Print("           ")
+				fmt.Print(repeatChar(" ", timeColWidth))
 			}
 		}
 
@@ -209,6 +241,15 @@ func DisplayPrecipitationChart(day model.ForecastDay) {
 		fmt.Println()
 	}
 
-	fmt.Println("     └────────────────────────────────────────────────────────────────────────────────────────┘")
+	fmt.Println("     └" + repeatChar("─", chartWidth) + "┘")
 	fmt.Println()
+}
+
+// Helper function to repeat a character n times
+func repeatChar(char string, count int) string {
+	result := ""
+	for i := 0; i < count; i++ {
+		result += char
+	}
+	return result
 }
