@@ -10,16 +10,6 @@ import (
 	"github.com/olekukonko/tablewriter"
 )
 
-// Constants for box drawing characters
-const (
-	boxTopLeft     = "┌"
-	boxTopRight    = "┐"
-	boxBottomLeft  = "└"
-	boxBottomRight = "┘"
-	boxHorizontal  = "─"
-	boxVertical    = "│"
-)
-
 // DisplayLocationComparison shows a side-by-side comparison of two locations
 func DisplayLocationComparison(data1, data2 *model.WeatherData) {
 	// Styled header
@@ -37,18 +27,14 @@ func DisplayLocationComparison(data1, data2 *model.WeatherData) {
 
 // printStyledHeader prints a styled header for the comparison
 func printStyledHeader(data1, data2 *model.WeatherData) {
-	compareBox := color.New(color.FgHiWhite)
 	comparisonTitle := color.New(color.FgHiBlue, color.Bold)
 	locationStyle := color.New(color.FgHiCyan, color.Bold)
 
-	compareBox.Println(boxTopLeft + repeat(boxHorizontal, 53) + boxTopRight)
-	compareBox.Print(boxVertical + " ")
 	comparisonTitle.Print("Location Comparison: ")
 	locationStyle.Printf("%s", data1.Location.Name)
 	comparisonTitle.Print(" vs ")
-	locationStyle.Printf("%s", data2.Location.Name)
-	compareBox.Println(" " + boxVertical)
-	compareBox.Println(boxBottomLeft + repeat(boxHorizontal, 53) + boxBottomRight)
+	locationStyle.Printf("%s\n", data2.Location.Name)
+	fmt.Println(dash(40))
 }
 
 // createComparisonTable builds the comparison table for two locations
@@ -57,7 +43,7 @@ func createComparisonTable(data1, data2 *model.WeatherData) *tablewriter.Table {
 	table.SetHeader([]string{"Metric", data1.Location.Name, data2.Location.Name, "Difference"})
 	table.SetBorder(false)
 	table.SetCenterSeparator("")
-	table.SetColumnSeparator("")
+	table.SetColumnSeparator("  ") // Use double spaces instead of pipes
 	table.SetRowSeparator("")
 	table.SetHeaderColor(
 		tablewriter.Colors{tablewriter.Bold, tablewriter.FgHiBlueColor},
@@ -70,8 +56,8 @@ func createComparisonTable(data1, data2 *model.WeatherData) *tablewriter.Table {
 	table.Append([]string{
 		"Condition",
 		data1.Current.Condition.Text + " " + GetConditionIcon(data1.Current.Condition.Text),
-		data2.Current.Condition.Text + " " + GetConditionIcon(data2.Current.Condition.Text),
-		"--",
+		" " + data2.Current.Condition.Text + " " + GetConditionIcon(data2.Current.Condition.Text),
+		"  --",
 	})
 
 	// Calculate differences
@@ -158,30 +144,11 @@ func displayComparisonAnalysis(data1, data2 *model.WeatherData) {
 	windDiff := data1.Current.WindKph - data2.Current.WindKph
 	if math.Abs(windDiff) > 10 {
 		if windDiff > 0 {
-			analysisColor.Printf("🌬️ %s is windier than %s\n", data1.Location.Name, data2.Location.Name)
+			analysisColor.Printf("🌬️  %s is windier than %s\n", data1.Location.Name, data2.Location.Name)
 		} else {
-			analysisColor.Printf("🌬️ %s is calmer than %s\n", data1.Location.Name, data2.Location.Name)
+			analysisColor.Printf("🌬️  %s is calmer than %s\n", data1.Location.Name, data2.Location.Name)
 		}
 	}
-}
-
-// Helper functions
-
-// repeat repeats a string n times
-func repeat(s string, n int) string {
-	var result string
-	for i := 0; i < n; i++ {
-		result += s
-	}
-	return result
-}
-
-// wrapText wraps text to a specified width
-func wrapText(text string, width int) string {
-	if len(text) <= width {
-		return text
-	}
-	return text[:width-3] + "..."
 }
 
 // formatDifference formats a numeric difference with a sign and unit
