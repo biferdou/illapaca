@@ -26,10 +26,6 @@ func DisplayLocationComparison(data1, data2 *model.WeatherData) {
 	printStyledHeader(data1, data2)
 	fmt.Println()
 
-	// Display quick comparison
-	displayQuickComparison(data1, data2)
-	fmt.Println()
-
 	// Display comparison table
 	table := createComparisonTable(data1, data2)
 	table.Render()
@@ -55,33 +51,6 @@ func printStyledHeader(data1, data2 *model.WeatherData) {
 	compareBox.Println(boxBottomLeft + repeat(boxHorizontal, 53) + boxBottomRight)
 }
 
-// displayQuickComparison shows a quick visual comparison of current conditions
-func displayQuickComparison(data1, data2 *model.WeatherData) {
-	boxStyle := color.New(color.FgHiWhite)
-	tempStyle := color.New(color.FgHiYellow, color.Bold)
-
-	// Get weather icons and conditions
-	icon1 := GetConditionIcon(data1.Current.Condition.Text)
-	icon2 := GetConditionIcon(data2.Current.Condition.Text)
-	cond1 := wrapText(data1.Current.Condition.Text, 22)
-	cond2 := wrapText(data2.Current.Condition.Text, 22)
-
-	// Print quick view
-	boxStyle.Println(boxTopLeft + repeat(boxHorizontal, 29) + boxTopRight + " " + boxTopLeft + repeat(boxHorizontal, 29) + boxTopRight)
-	boxStyle.Printf("%s %-27s %s %s %-27s %s\n", boxVertical, data1.Location.Name, boxVertical, boxVertical, data2.Location.Name, boxVertical)
-	boxStyle.Printf("%s %-2s %-24s %s %s %-2s %-24s %s\n", boxVertical, icon1, cond1, boxVertical, boxVertical, icon2, cond2, boxVertical)
-	boxStyle.Print(boxVertical + " ")
-	tempStyle.Printf("%.1f°C", data1.Current.TempC)
-	boxStyle.Printf(" feels like ")
-	tempStyle.Printf("%.1f°C", data1.Current.FeelsLikeC)
-	boxStyle.Print(" " + boxVertical + " " + boxVertical + " ")
-	tempStyle.Printf("%.1f°C", data2.Current.TempC)
-	boxStyle.Printf(" feels like ")
-	tempStyle.Printf("%.1f°C", data2.Current.FeelsLikeC)
-	boxStyle.Println(" " + boxVertical)
-	boxStyle.Println(boxBottomLeft + repeat(boxHorizontal, 29) + boxBottomRight + " " + boxBottomLeft + repeat(boxHorizontal, 29) + boxBottomRight)
-}
-
 // createComparisonTable builds the comparison table for two locations
 func createComparisonTable(data1, data2 *model.WeatherData) *tablewriter.Table {
 	table := tablewriter.NewWriter(os.Stdout)
@@ -100,8 +69,8 @@ func createComparisonTable(data1, data2 *model.WeatherData) *tablewriter.Table {
 	// Add condition with icon and text
 	table.Append([]string{
 		"Condition",
-		fmt.Sprintf("%s %s", GetConditionIcon(data1.Current.Condition.Text), data1.Current.Condition.Text),
-		fmt.Sprintf("%s %s", GetConditionIcon(data2.Current.Condition.Text), data2.Current.Condition.Text),
+		data1.Current.Condition.Text + " " + GetConditionIcon(data1.Current.Condition.Text),
+		data2.Current.Condition.Text + " " + GetConditionIcon(data2.Current.Condition.Text),
 		"--",
 	})
 
