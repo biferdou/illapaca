@@ -75,12 +75,9 @@ func DisplayCompactDashboard(data *model.WeatherData) {
 	forecastTitle := color.New(color.FgHiMagenta)
 	forecastTitle.Println("3-Day Forecast:")
 
-	days := len(data.Forecast.ForecastDay)
-	if days > 3 {
-		days = 3 // Limit to 3 days for compact view
-	}
+	days := min(len(data.Forecast.ForecastDay), 3)
 
-	for i := 0; i < days; i++ {
+	for i := range days {
 		day := data.Forecast.ForecastDay[i]
 		icon := GetConditionIcon(day.Day.Condition.Text)
 		fmt.Printf("%s: %s %.1f°C/%.1f°C | Rain: %d%%\n",
