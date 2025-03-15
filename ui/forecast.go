@@ -9,15 +9,11 @@ import (
 	"github.com/olekukonko/tablewriter"
 )
 
-// DisplayForecast outputs weather forecast with improved styling
+// DisplayForecast outputs weather forecast with clean styling
 func DisplayForecast(data *model.WeatherData) {
-	forecastBox := color.New(color.FgHiWhite)
 	forecastTitle := color.New(color.FgHiMagenta, color.Bold)
-
-	forecastBox.Println("┌─────────────────────────────────────────┐")
-	forecastBox.Print("│ ")
-	forecastTitle.Println("Weather Forecast:")
-	forecastBox.Println("└─────────────────────────────────────────┘")
+	forecastTitle.Println("Weather Forecast")
+	fmt.Println()
 
 	table := tablewriter.NewWriter(os.Stdout)
 	table.SetHeader([]string{"Date", "Condition", "Max", "Min", "Rain", "Sunrise", "Sunset"})
@@ -27,7 +23,7 @@ func DisplayForecast(data *model.WeatherData) {
 		tablewriter.ALIGN_CENTER, tablewriter.ALIGN_CENTER})
 	table.SetBorder(false)
 	table.SetCenterSeparator("")
-	table.SetColumnSeparator("")
+	table.SetColumnSeparator("  ") // Use double spaces instead of pipes
 	table.SetRowSeparator("")
 	table.SetHeaderColor(
 		tablewriter.Colors{tablewriter.Bold, tablewriter.FgHiBlueColor},
@@ -80,12 +76,10 @@ func DisplayForecast(data *model.WeatherData) {
 }
 
 // DisplayHourlyForecast outputs hourly weather forecast for a given day
-// truncateCondition shortens a condition string if it exceeds maxLength
-// removed to fix compilation errors
-
 func DisplayHourlyForecast(day model.ForecastDay) {
 	hourlyTitle := color.New(color.FgHiCyan, color.Bold)
-	hourlyTitle.Printf("Hourly Forecast for %s:\n", day.Date)
+	hourlyTitle.Printf("Hourly Forecast for %s\n", day.Date)
+	fmt.Println()
 
 	// Create a lookup table for condition descriptions
 	conditionDescriptions := make(map[string]string)
@@ -105,6 +99,10 @@ func DisplayHourlyForecast(day model.ForecastDay) {
 
 	table := tablewriter.NewWriter(os.Stdout)
 	table.SetHeader([]string{"Time", "Temp", "Condition", "Rain Chance"})
+	table.SetBorder(false)
+	table.SetCenterSeparator("")
+	table.SetColumnSeparator("  ") // Use double spaces instead of pipes
+	table.SetRowSeparator("")
 
 	// Display only a subset of hours to keep the output manageable
 	for i, hour := range day.Hour {
