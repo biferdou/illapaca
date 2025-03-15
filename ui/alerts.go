@@ -8,21 +8,33 @@ import (
 	"github.com/fatih/color"
 )
 
-// CheckAlerts checks weather against alert thresholds
+// CheckAlerts checks weather against alert thresholds with improved styling
 func CheckAlerts(data *model.WeatherData) {
-	alert := color.New(color.FgHiRed, color.Bold)
 	thresholds := config.AppConfig.AlertThresholds
-
 	alerts := getAlerts(data, thresholds)
 
-	// Display any alerts found
-	for _, alertMsg := range alerts {
-		alert.Printf("⚠️ ALERT: %s\n", alertMsg)
+	if len(alerts) == 0 {
+		return
 	}
 
-	if len(alerts) > 0 {
-		fmt.Println()
+	// Create an alert box
+	alertBox := color.New(color.FgHiWhite)
+	alertTitle := color.New(color.FgHiRed, color.Bold)
+	alertText := color.New(color.FgHiRed)
+
+	alertBox.Println("┌─────────────────────────────────────────┐")
+	alertBox.Print("│ ")
+	alertTitle.Println("⚠️  WEATHER ALERTS  ⚠️")
+
+	// Display each alert
+	for _, alertMsg := range alerts {
+		alertBox.Print("│ ")
+		alertText.Printf("• %s", alertMsg)
+		alertBox.Println(" │")
 	}
+
+	alertBox.Println("└─────────────────────────────────────────┘")
+	fmt.Println()
 }
 
 // getAlerts returns a list of alert messages for the given weather data
