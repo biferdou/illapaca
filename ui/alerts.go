@@ -8,7 +8,7 @@ import (
 	"github.com/fatih/color"
 )
 
-// CheckAlerts checks weather against alert thresholds with improved styling
+// CheckAlerts checks weather against alert thresholds with clean styling
 func CheckAlerts(data *model.WeatherData) {
 	thresholds := config.AppConfig.AlertThresholds
 	alerts := getAlerts(data, thresholds)
@@ -17,23 +17,17 @@ func CheckAlerts(data *model.WeatherData) {
 		return
 	}
 
-	// Create an alert box
-	alertBox := color.New(color.FgHiWhite)
+	// Create alert section with cleaner styling
 	alertTitle := color.New(color.FgHiRed, color.Bold)
 	alertText := color.New(color.FgHiRed)
 
-	alertBox.Println("┌─────────────────────────────────────────┐")
-	alertBox.Print("│ ")
 	alertTitle.Println("⚠️  WEATHER ALERTS  ⚠️")
+	fmt.Println()
 
 	// Display each alert
 	for _, alertMsg := range alerts {
-		alertBox.Print("│ ")
-		alertText.Printf("• %s", alertMsg)
-		alertBox.Println(" │")
+		alertText.Printf("• %s\n", alertMsg)
 	}
-
-	alertBox.Println("└─────────────────────────────────────────┘")
 	fmt.Println()
 }
 
@@ -41,7 +35,7 @@ func CheckAlerts(data *model.WeatherData) {
 func getAlerts(data *model.WeatherData, thresholds config.AlertThresholds) []string {
 	var alerts []string
 
-	// Check current conditions
+	// Same implementation as before
 	if data.Current.TempC > thresholds.HighTemp {
 		alerts = append(alerts, fmt.Sprintf("High temperature (%.1f°C) exceeds threshold (%.1f°C)",
 			data.Current.TempC, thresholds.HighTemp))
@@ -72,6 +66,7 @@ func getAlerts(data *model.WeatherData, thresholds config.AlertThresholds) []str
 func DisplayAlertSettings(thresholds config.AlertThresholds) {
 	settingsTitle := color.New(color.FgHiYellow, color.Bold)
 	settingsTitle.Println("Alert Threshold Settings:")
+	fmt.Println()
 
 	fmt.Printf("High Temperature: %.1f°C\n", thresholds.HighTemp)
 	fmt.Printf("Low Temperature: %.1f°C\n", thresholds.LowTemp)
